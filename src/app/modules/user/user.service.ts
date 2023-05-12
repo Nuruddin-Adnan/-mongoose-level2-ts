@@ -7,11 +7,11 @@ export const createUserService = async (data: IUser): Promise<IUser> => {
 }
 
 export const getUsersService = async (): Promise<IUser[]> => {
-    const users = await User.find();
+    const users = await User.find().select({ password: 0 });
     return users;
 }
 
 export const getUserByIdService = async (id: string): Promise<IUser | null> => {
-    const user = await User.findOne({ id: id });
+    const user = await User.findOne({ id: id }, { password: 0 });
     return user;
 }
