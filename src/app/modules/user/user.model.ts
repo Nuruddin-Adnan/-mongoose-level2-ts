@@ -1,17 +1,19 @@
-import { Schema, model } from "mongoose";
-import { IUser } from "./user.interface";
+import { Model, Schema, model } from "mongoose";
+import { IUser, IUserMethods, UserModel } from "./user.interface";
 import validator from 'validator';
 
-const userSchema = new Schema<IUser>({
+// type UserModel = Model<IUser, {}, IUserMethods>;
+
+const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     id: {
-        type: String,
+        type: Number,
         required: true,
         unique: true
     },
     role: {
         type: String,
         required: true,
-        enum: ["student", "teacher"]
+        enum: ["student", "teacher", "admin"]
     },
     password: {
         type: String,
@@ -45,10 +47,16 @@ const userSchema = new Schema<IUser>({
     contactNo: {
         type: String,
         required: true,
+        validate: [validator.isMobilePhone, "Please provide a valid phone number"]
     },
     emergencyContactNo: {
         type: String,
         required: true,
+        validate: [validator.isMobilePhone, "Please provide a valid phone number"]
+    },
+    imageURL: {
+        type: String,
+        validate: [validator.isURL, "Please providd a valid image"]
     },
     presentAddress: {
         type: String,
@@ -57,10 +65,24 @@ const userSchema = new Schema<IUser>({
     permanentAddress: {
         type: String,
         required: true,
+    },
+    trackId: {
+        type: Number,
+        // required: true,
     }
 
 })
 
-const User = model<IUser>('User', userSchema);
+
+userSchema.static('getAdminUsers', async function getAdminUsers() {
+    const retult = await this.find({ role: 'admin' })
+    return retult
+});
+
+userSchema.method('fullName', function fullName() {
+    return this.name.firstName + ' ' + this.name.lastName;
+});
+
+const User = model<IUser, UserModel>('User', userSchema);
 
 export default User;

@@ -2,8 +2,14 @@ import { IUser } from "./user.interface";
 import User from "./user.model";
 
 export const createUserService = async (data: IUser): Promise<IUser> => {
-    const result = await User.create(data);
-    return result;
+    // const result = await User.create(data);
+    const user = new User(data);
+
+    // instance method
+    // console.log(user.fullName());
+
+    await user.save()
+    return user;
 }
 
 export const getUsersService = async (): Promise<IUser[]> => {

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { createUserService, getUserByIdService, getUsersService } from "./user.service";
 import { IUser } from "./user.interface";
+import User from "./user.model";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -16,8 +17,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
     } catch (error) {
         res.status(400).json({
-            status: 'success',
-            message: 'Successfully create user',
+            status: 'fail',
+            message: "Couldn't create user",
             error: `${error.message}`
         })
     }
@@ -34,7 +35,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
         })
     } catch (error) {
         res.status(400).json({
-            status: 'success',
+            status: 'fail',
             message: "Couldn't find users",
             error: `${error.message}`
         })
@@ -60,8 +61,25 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
         })
     } catch (error) {
         res.status(400).json({
-            status: 'success',
+            status: 'fail',
             message: "Couldn't find user",
+            error: `${error.message}`
+        })
+    }
+}
+
+export const getAdminUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await User.getAdminUsers();
+        res.status(200).json({
+            status: 'success',
+            message: 'Get admin users successfully',
+            data: result
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: 'fail',
+            message: "Couldn't find users",
             error: `${error.message}`
         })
     }
